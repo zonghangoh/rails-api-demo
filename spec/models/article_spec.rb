@@ -34,4 +34,16 @@ RSpec.describe Article, type: :model do
     end
   end
 
+  describe '.recent' do
+    it 'returns articles in the proper order' do
+      older_article = create(:article, created_at: 1.hour.ago)
+      recent_article = create(:article)
+
+      expect(described_class.recent).to eq([recent_article, older_article])
+
+      # recent_article.update_column(:created_at, 2.hours.ago)
+      older_article.touch(:created_at)
+      expect(described_class.recent).to eq([older_article, recent_article])
+    end
+  end
 end
