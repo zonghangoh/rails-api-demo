@@ -40,7 +40,6 @@ RSpec.describe CommentsController, type: :controller do
       user = create :user
       create :comment, article: article, user: user
       subject
-      pp json
       comment = json.first
       expect(comment['article']['id']).to eq(article.id)
       expect(comment['user']['id']).to eq(user.id)

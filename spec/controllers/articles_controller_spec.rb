@@ -135,7 +135,6 @@ describe ArticlesController do
 
         it 'should have proper json body' do
           subject
-          pp json
           expect(json).to include(
             valid_attributes['data']['attributes']
           )
