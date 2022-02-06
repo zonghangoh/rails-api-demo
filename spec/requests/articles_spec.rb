@@ -3,6 +3,26 @@
 require 'rails_helper'
 
 RSpec.describe ArticlesController do
+  describe '#show' do
+    it 'returns a success response' do
+      article = create :article
+      get "/articles/#{article.id}"
+      expect(response).to have_http_status(:ok)
+    end
+
+    it 'returns a proper JSON' do
+      article = create :article
+      get "/articles/#{article.id}"
+      expect(json_data[:id]).to eq(article.id.to_s)
+      expect(json_data[:type]).to eq('article')
+      expect(json_data[:attributes]).to eq({
+                                             title: article.title,
+                                             content: article.content,
+                                             slug: article.slug
+                                           })
+    end
+  end
+
   describe '#index' do
     it 'returns a success response' do
       get '/articles'
@@ -44,9 +64,9 @@ RSpec.describe ArticlesController do
     it 'contains pagination links in the response' do
       article1, article2, article3 = create_list(:article, 3)
       get '/articles', params: { page: { number: 2, size: 1 } }
-      expect(json['links'].length).to eq(1)
-      expect(json['links'].keys).to contain_exactly(
-        'first', 'prev', 'next', 'last', 'self'
+      expect(json[:links].length).to eq(5)
+      expect(json[:links].keys).to contain_exactly(
+        :first, :prev, :next, :last, :self
       )
     end
   end

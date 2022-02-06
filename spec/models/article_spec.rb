@@ -1,49 +1,47 @@
-# frozen_string_literal: true
-
 require 'rails_helper'
 
 RSpec.describe Article, type: :model do
-
   describe '#validations' do
-    let(:article) { build(:article) }
-
-    it 'tests article object' do
-      # article = FactoryBot.create(:article)
-      # article = create(:article)
-
-      expect(article).to be_valid # article.valid? == true
-      expect(article.title).to eq('Sample article')
+    it 'should test that the factory is valid' do
+      expect(build :article).to be_valid
     end
 
-    it 'has an invalid title' do
-      article = build(:article, title: '')
+    it 'should validate the presence of the title' do
+      article = build :article, title: ''
       expect(article).not_to be_valid
-      expect(article.errors[:title]).to include("can't be blank")
+      expect(article.errors.messages[:title]).to include("can't be blank")
     end
 
-    it 'has invalid content' do
-      article = build(:article, content: '')
+    it 'should validate the presence of the content' do
+      article = build :article, content: ''
       expect(article).not_to be_valid
-      expect(article.errors[:content]).to include("can't be blank")
+      expect(article.errors.messages[:content]).to include("can't be blank")
     end
 
-    it 'has invalid slug' do
-      article = build(:article, slug: '')
+    it 'should validate the presence of the slug' do
+      article = build :article, slug: ''
       expect(article).not_to be_valid
-      expect(article.errors[:slug]).to include("can't be blank")
+      expect(article.errors.messages[:slug]).to include("can't be blank")
+    end
+
+    it 'should validate uniqueness of the slug' do
+      article = create :article
+      invalid_article = build :article, slug: article.slug
+      expect(invalid_article).not_to be_valid
     end
   end
 
   describe '.recent' do
-    it 'returns articles in the proper order' do
-      older_article = create(:article, created_at: 1.hour.ago)
-      recent_article = create(:article)
-
-      expect(described_class.recent).to eq([recent_article, older_article])
-
-      # recent_article.update_column(:created_at, 2.hours.ago)
-      older_article.touch(:created_at)
-      expect(described_class.recent).to eq([older_article, recent_article])
+    it 'should list recent article first' do
+      old_article = create :article
+      newer_article = create :article
+      expect(described_class.recent).to eq(
+        [ newer_article, old_article ]
+      )
+      old_article.update_column :created_at, Time.now
+      expect(described_class.recent).to eq(
+        [ old_article, newer_article ]
+      )
     end
   end
 end
