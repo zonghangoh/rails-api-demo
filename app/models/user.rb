@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class User < ApplicationRecord
   include BCrypt
   validates :login, presence: true, uniqueness: true
@@ -14,6 +16,7 @@ class User < ApplicationRecord
 
   def password=(new_password)
     return @password = new_password if new_password.blank?
+
     @password = Password.create(new_password)
     self.encrypted_password = @password
   end

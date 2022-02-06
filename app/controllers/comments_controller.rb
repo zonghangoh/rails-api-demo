@@ -1,11 +1,13 @@
+# frozen_string_literal: true
+
 class CommentsController < ApplicationController
   skip_before_action :authorize!, only: [:index]
   before_action :load_article
 
   def index
-    comments = @article.comments.
-      page(current_page).
-      per(per_page)
+    comments = @article.comments
+                       .page(current_page)
+                       .per(per_page)
     render json: comments
   end
 
@@ -16,7 +18,7 @@ class CommentsController < ApplicationController
 
     @comment.save!
     render json: @comment, status: :created, location: @article
-  rescue
+  rescue StandardError
     render json: @comment, adapter: :json_api,
            serializer: ErrorSerializer,
            status: :unprocessable_entity
@@ -29,8 +31,8 @@ class CommentsController < ApplicationController
   end
 
   def comment_params
-    params.require(:data).require(:attributes).
-      permit(:content) ||
+    params.require(:data).require(:attributes)
+          .permit(:content) ||
       ActionController::Parameters.new
   end
 end

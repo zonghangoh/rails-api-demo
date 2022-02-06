@@ -1,10 +1,12 @@
+# frozen_string_literal: true
+
 class ArticlesController < ApplicationController
-  skip_before_action :authorize!, only: [:index, :show]
+  skip_before_action :authorize!, only: %i[index show]
 
   def index
-    articles = Article.recent.
-      page(current_page).
-      per(per_page)
+    articles = Article.recent
+                      .page(current_page)
+                      .per(per_page)
     render json: articles
   end
 
@@ -16,7 +18,7 @@ class ArticlesController < ApplicationController
     article = current_user.articles.build(article_params)
     article.save!
     render json: article, status: :created
-  rescue
+  rescue StandardError
     render json: article, adapter: :json_api,
            serializer: ErrorSerializer,
            status: :unprocessable_entity
@@ -24,11 +26,11 @@ class ArticlesController < ApplicationController
 
   def update
     article = current_user.articles.find(params[:id])
-    article.update_attributes!(article_params)
+    article.update!(article_params)
     render json: article, status: :ok
   rescue ActiveRecord::RecordNotFound
     authorization_error
-  rescue
+  rescue StandardError
     render json: article, adapter: :json_api,
            serializer: ErrorSerializer,
            status: :unprocessable_entity
@@ -38,15 +40,15 @@ class ArticlesController < ApplicationController
     article = current_user.articles.find(params[:id])
     article.destroy
     head :no_content
-  rescue
+  rescue StandardError
     authorization_error
   end
 
   private
 
   def article_params
-    params.require(:data).require(:attributes).
-      permit(:title, :content, :slug) ||
+    params.require(:data).require(:attributes)
+          .permit(:title, :content, :slug) ||
       ActionController::Parameters.new
   end
 end

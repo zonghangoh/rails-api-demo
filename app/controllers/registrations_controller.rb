@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class RegistrationsController < ApplicationController
   skip_before_action :authorize!, only: :create
 
@@ -14,8 +16,8 @@ class RegistrationsController < ApplicationController
   private
 
   def registration_params
-    params.require(:data).require(:attributes).
-      permit(:login, :password) ||
+    params.require(:data).require(:attributes)
+          .permit(:login, :password) ||
       ActionController::Parameters.new
   end
 end

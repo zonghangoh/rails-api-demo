@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ApplicationController < ActionController::API
   class AuthorizationError < StandardError; end
 
@@ -12,15 +14,16 @@ class ApplicationController < ActionController::API
   def current_page
     return 1 unless params[:page]
     return params[:page] if params[:page].is_a?(String)
+
     params.dig(:page, :number) if params[:page].is_a?(Hash)
   end
 
   def per_page
     return unless params[:page]
     return params[:per_page] if params[:per_page].is_a?(String)
+
     params.dig(:page, :size) if params[:page].is_a?(Hash)
   end
-
 
   def authorize!
     raise AuthorizationError unless current_user
@@ -37,31 +40,31 @@ class ApplicationController < ActionController::API
 
   def authentication_oauth_error
     error = {
-      "status" => "401",
-      "source" => { "pointer" => "/code" },
-      "title" =>  "Authentication code is invalid",
-      "detail" => "You must provide valid code in order to exchange it for token."
+      'status' => '401',
+      'source' => { 'pointer' => '/code' },
+      'title' => 'Authentication code is invalid',
+      'detail' => 'You must provide valid code in order to exchange it for token.'
     }
-    render json: { "errors": [ error ] }, status: 401
+    render json: { "errors": [error] }, status: 401
   end
 
   def authentication_standard_error
     error = {
-      "status" => "401",
-      "source" => { "pointer" => "/data/attributes/password" },
-      "title" =>  "Invalid login or password",
-      "detail" => "You must provide valid credentials in order to exchange them for token."
+      'status' => '401',
+      'source' => { 'pointer' => '/data/attributes/password' },
+      'title' => 'Invalid login or password',
+      'detail' => 'You must provide valid credentials in order to exchange them for token.'
     }
-    render json: { "errors": [ error ] }, status: 401
+    render json: { "errors": [error] }, status: 401
   end
 
   def authorization_error
     error = {
-      "status" => "403",
-      "source" => { "pointer" => "/headers/authorization" },
-      "title" =>  "Not authorized",
-      "detail" => "You have no right to access this resource."
+      'status' => '403',
+      'source' => { 'pointer' => '/headers/authorization' },
+      'title' => 'Not authorized',
+      'detail' => 'You have no right to access this resource.'
     }
-    render json: { "errors": [ error ] }, status: 403
+    render json: { "errors": [error] }, status: 403
   end
 end

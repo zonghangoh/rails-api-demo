@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 Rails.application.routes.draw do
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
   post 'login', to: 'access_tokens#create'
@@ -5,6 +7,6 @@ Rails.application.routes.draw do
   post 'sign_up', to: 'registrations#create'
 
   resources :articles do
-    resources :comments, only: [:index, :create]
+    resources :comments, only: %i[index create]
   end
 end

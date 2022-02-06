@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
 describe RegistrationsController do
@@ -21,7 +23,7 @@ describe RegistrationsController do
       end
 
       it 'should not create a user' do
-        expect{ subject }.not_to change{ User.count }
+        expect { subject }.not_to change { User.count }
       end
 
       it 'should return error messages in response body' do
@@ -58,18 +60,13 @@ describe RegistrationsController do
 
       it 'should create a user' do
         expect(User.exists?(login: 'jsmith')).to be_falsey
-        expect{ subject }.to change{ User.count }.by(1)
+        expect { subject }.to change { User.count }.by(1)
         expect(User.exists?(login: 'jsmith')).to be_truthy
       end
 
       it 'should return proper json' do
         subject
-        expect(json_data['attributes']).to eq({
-          'login' => 'jsmith',
-          'avatar-url' => nil,
-          'url' => nil,
-          'name' => nil
-        })
+        expect(json['login']).to eq('jsmith')
       end
     end
   end
